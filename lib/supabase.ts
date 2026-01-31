@@ -38,6 +38,7 @@ export interface Partido {
   superficie: "caucho" | "cemento" | "sintetico";
   goles_equipo_a: number;
   goles_equipo_b: number;
+  estado: "programado" | "finalizado";
   created_at: string;
 }
 
@@ -61,3 +62,72 @@ export interface EstadisticasJugador {
   empates: number;
   porcentaje_victorias: number;
 }
+
+export type FaseMundial = "grupos" | "octavos" | "cuartos" | "semifinal" | "final" | "campeon";
+
+export interface MundialEstado {
+  id: string;
+  jugador_id: string;
+  fase: FaseMundial;
+  partidos_fase: number;
+  victorias_grupos: number;
+  empates_grupos: number;
+  derrotas_grupos: number;
+  mundiales_ganados: number;
+  created_at: string;
+  updated_at: string;
+  jugador?: Jugador;
+}
+
+export interface MundialHistorial {
+  id: string;
+  jugador_id: string;
+  resultado: string;
+  fecha_fin: string;
+}
+
+export interface Prediccion {
+  id: string;
+  partido_id: string;
+  session_id: string;
+  prediccion: "A" | "B";
+  created_at: string;
+}
+
+export interface HabilidadesJugador {
+  id: string;
+  jugador_id: string;
+  fuerza: number;
+  arquero: number;
+  tiro: number;
+  regate: number;
+  pase: number;
+  defensa: number;
+  estado_fisico: number;
+  reaccion: number;
+  overall: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export const HABILIDADES_KEYS = [
+  "fuerza",
+  "arquero",
+  "tiro",
+  "regate",
+  "pase",
+  "defensa",
+  "estado_fisico",
+  "reaccion",
+] as const;
+
+export const HABILIDADES_LABELS: Record<string, string> = {
+  fuerza: "FUE",
+  arquero: "ARQ",
+  tiro: "TIR",
+  regate: "REG",
+  pase: "PAS",
+  defensa: "DEF",
+  estado_fisico: "FIS",
+  reaccion: "REA",
+};

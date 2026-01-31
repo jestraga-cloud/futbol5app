@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Navigation from "@/components/Navigation";
 import { supabase, Jugador } from "@/lib/supabase";
+import FifaCardModal from "@/components/FifaCardModal";
 
 export default function Jugadores() {
   const [jugadores, setJugadores] = useState<Jugador[]>([]);
@@ -11,6 +12,7 @@ export default function Jugadores() {
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [editando, setEditando] = useState<string | null>(null);
+  const [jugadorSeleccionado, setJugadorSeleccionado] = useState<Jugador | null>(null);
 
   useEffect(() => {
     cargarJugadores();
@@ -196,7 +198,10 @@ export default function Jugadores() {
                   key={jugador.id}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
-                  <div>
+                  <div
+                    className="cursor-pointer hover:opacity-70 transition-opacity"
+                    onClick={() => setJugadorSeleccionado(jugador)}
+                  >
                     <p className="font-medium text-gray-800">
                       {jugador.apodo || jugador.nombre}
                     </p>
@@ -224,6 +229,12 @@ export default function Jugadores() {
           )}
         </div>
       </div>
+
+      <FifaCardModal
+        jugador={jugadorSeleccionado}
+        isOpen={jugadorSeleccionado !== null}
+        onClose={() => setJugadorSeleccionado(null)}
+      />
 
       <Navigation />
     </main>
