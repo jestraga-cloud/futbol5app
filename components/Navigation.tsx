@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAdmin } from "@/hooks/useAdmin";
 import AdminLogin from "./AdminLogin";
-import DarkModeToggle from "./DarkModeToggle";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -38,22 +37,17 @@ export default function Navigation() {
             </Link>
           ))}
 
-          {/* Dark mode + Admin compactos */}
-          <div className="flex flex-col items-center gap-0.5">
-            <div className="flex items-center gap-1">
-              <DarkModeToggle />
-              <button
-                onClick={() => isAdmin ? logout() : setShowLogin(true)}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  isAdmin
-                    ? "text-green-600 bg-green-50"
-                    : "text-gray-500 hover:text-green-600"
-                }`}
-              >
-                <span className="text-sm">{isAdmin ? "🔓" : "🔒"}</span>
-              </button>
-            </div>
-          </div>
+          <button
+            onClick={() => isAdmin ? logout() : setShowLogin(true)}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+              isAdmin
+                ? "text-green-600 bg-green-50"
+                : "text-gray-500 hover:text-green-600"
+            }`}
+          >
+            <span className="text-lg">{isAdmin ? "🔓" : "🔒"}</span>
+            <span className="text-[10px] mt-1 font-medium">Admin</span>
+          </button>
         </div>
       </nav>
 

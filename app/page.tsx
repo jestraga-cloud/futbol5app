@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import RankingTable from "@/components/RankingTable";
 import ProximoPartidoBanner from "@/components/ProximoPartidoBanner";
 import DashboardStats from "@/components/DashboardStats";
+import DarkModeToggle from "@/components/DarkModeToggle";
 import ErrorMessage from "@/components/ErrorMessage";
 import { useEstadisticas } from "@/hooks/useEstadisticas";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
@@ -42,9 +43,12 @@ export default function Home() {
     <main className="min-h-screen pb-24">
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
-        <div className="text-center mb-4">
-          <h1 className="text-2xl font-bold text-white">⚽ Futbol 5</h1>
-          <p className="text-sm text-white/80">Registro de partidos entre amigos</p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white">⚽ Futbol 5</h1>
+            <p className="text-sm text-white/80">Registro de partidos entre amigos</p>
+          </div>
+          <DarkModeToggle />
         </div>
 
         {/* Error */}
@@ -70,14 +74,12 @@ export default function Home() {
         {/* Link a Pachanga */}
         <a
           href="/pachanga"
-          className="card p-4 flex items-center justify-between mb-4 hover:opacity-90 transition-opacity"
+          className="card p-4 flex items-center justify-center gap-3 mb-4 hover:opacity-90 transition-opacity text-center"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🏆</span>
-            <div>
-              <p className="font-semibold">Pachanga</p>
-              <p className="text-sm text-gray-500">Mundial personal de cada jugador</p>
-            </div>
+          <span className="text-2xl">🏆</span>
+          <div>
+            <p className="font-semibold">Pachanga</p>
+            <p className="text-sm text-gray-500">Mundial personal de cada jugador</p>
           </div>
           <span className="text-gray-400">→</span>
         </a>
