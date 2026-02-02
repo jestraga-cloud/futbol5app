@@ -43,8 +43,7 @@ export default function Home() {
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
         <div className="text-center mb-4">
-          <div className="text-4xl soccer-ball">⚽</div>
-          <h1 className="text-2xl font-bold text-white">Futbol 5</h1>
+          <h1 className="text-2xl font-bold text-white">⚽ Futbol 5</h1>
           <p className="text-sm text-white/80">Registro de partidos entre amigos</p>
         </div>
 
@@ -67,6 +66,21 @@ export default function Home() {
         <div className="mb-4">
           <RankingTable estadisticas={ranking} />
         </div>
+
+        {/* Link a Pachanga */}
+        <a
+          href="/pachanga"
+          className="card p-4 flex items-center justify-between mb-4 hover:opacity-90 transition-opacity"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🏆</span>
+            <div>
+              <p className="font-semibold">Pachanga</p>
+              <p className="text-sm text-gray-500">Mundial personal de cada jugador</p>
+            </div>
+          </div>
+          <span className="text-gray-400">→</span>
+        </a>
 
       </div>
 

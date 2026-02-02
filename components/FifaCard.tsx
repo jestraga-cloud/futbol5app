@@ -5,6 +5,7 @@ import { Jugador, HabilidadesJugador, HABILIDADES_KEYS, HABILIDADES_LABELS } fro
 interface FifaCardProps {
   jugador: Jugador;
   habilidades: HabilidadesJugador | null;
+  promedioGrupo?: number;
 }
 
 function getStatColor(value: number): string {
@@ -13,11 +14,12 @@ function getStatColor(value: number): string {
   return "#f87171";
 }
 
-function getRankBadge(overall: number): { emoji: string; label: string } {
-  if (overall >= 80) return { emoji: "💎", label: "Elite" };
-  if (overall >= 70) return { emoji: "🥇", label: "Pro" };
-  if (overall >= 60) return { emoji: "🥈", label: "Amateur" };
-  return { emoji: "🥉", label: "Rookie" };
+function getRankBadge(overall: number, promedio: number): { emoji: string; label: string } {
+  const diff = overall - promedio;
+  if (diff >= 10) return { emoji: "💎", label: "Elite" };
+  if (diff >= 3) return { emoji: "🥇", label: "Crack" };
+  if (diff >= -3) return { emoji: "⚡", label: "Titular" };
+  return { emoji: "🔥", label: "Promesa" };
 }
 
 function RadarChart({ habilidades }: { habilidades: HabilidadesJugador }) {
@@ -116,7 +118,7 @@ function RadarChart({ habilidades }: { habilidades: HabilidadesJugador }) {
   );
 }
 
-export default function FifaCard({ jugador, habilidades }: FifaCardProps) {
+export default function FifaCard({ jugador, habilidades, promedioGrupo }: FifaCardProps) {
   const displayName = jugador.apodo || jugador.nombre;
 
   if (!habilidades) {
@@ -129,7 +131,7 @@ export default function FifaCard({ jugador, habilidades }: FifaCardProps) {
     );
   }
 
-  const rank = getRankBadge(habilidades.overall);
+  const rank = getRankBadge(habilidades.overall, promedioGrupo ?? habilidades.overall);
 
   return (
     <div className="fifa-card">

@@ -247,12 +247,33 @@ body {
 .dark .bg-orange-50 { background: rgba(249, 115, 22, 0.1) !important; }
 
 /* Dark mode for colored backgrounds with text */
-.dark .bg-blue-100 { background: rgba(59, 130, 246, 0.15) !important; }
-.dark .bg-red-100 { background: rgba(239, 68, 68, 0.15) !important; }
-.dark .bg-purple-100 { background: rgba(168, 85, 247, 0.15) !important; }
-.dark .bg-green-100 { background: rgba(34, 197, 94, 0.15) !important; }
-.dark .bg-yellow-100 { background: rgba(234, 179, 8, 0.15) !important; }
-.dark .bg-orange-100 { background: rgba(249, 115, 22, 0.15) !important; }
+.dark .bg-blue-100 { background: rgba(59, 130, 246, 0.2) !important; }
+.dark .bg-red-100 { background: rgba(239, 68, 68, 0.2) !important; }
+.dark .bg-purple-100 { background: rgba(168, 85, 247, 0.2) !important; }
+.dark .bg-green-100 { background: rgba(34, 197, 94, 0.2) !important; }
+.dark .bg-yellow-100 { background: rgba(234, 179, 8, 0.2) !important; }
+.dark .bg-orange-100 { background: rgba(249, 115, 22, 0.2) !important; }
+
+/* Dark mode text on colored badges */
+.dark .text-blue-800 { color: #93c5fd !important; }
+.dark .text-red-800 { color: #fca5a5 !important; }
+.dark .text-purple-800 { color: #d8b4fe !important; }
+.dark .text-green-800 { color: #86efac !important; }
+.dark .text-yellow-800 { color: #fde047 !important; }
+.dark .text-orange-800 { color: #fdba74 !important; }
+
+.dark .text-blue-700 { color: #93c5fd !important; }
+.dark .text-red-700 { color: #fca5a5 !important; }
+.dark .text-green-700 { color: #86efac !important; }
+.dark .text-green-600 { color: #4ade80 !important; }
+.dark .text-yellow-600 { color: #fde047 !important; }
+.dark .text-amber-600 { color: #fbbf24 !important; }
+.dark .text-blue-600 { color: #60a5fa !important; }
+.dark .text-red-600 { color: #f87171 !important; }
+.dark .text-purple-600 { color: #c084fc !important; }
+.dark .text-red-400 { color: #f87171 !important; }
+.dark .text-red-500 { color: #ef4444 !important; }
+.dark .text-blue-500 { color: #3b82f6 !important; }
 
 /* Dark ProximoPartidoBanner gradient */
 .dark .from-purple-50 { --tw-gradient-from: rgba(168, 85, 247, 0.1) !important; }

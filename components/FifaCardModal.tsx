@@ -12,6 +12,7 @@ interface FifaCardModalProps {
 
 export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModalProps) {
   const [habilidades, setHabilidades] = useState<HabilidadesJugador | null>(null);
+  const [promedioGrupo, setPromedioGrupo] = useState<number>(0);
   const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
@@ -20,12 +21,22 @@ export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModa
     const fetchHabilidades = async () => {
       setCargando(true);
       try {
-        const { data } = await supabase
-          .from("habilidades_jugador")
-          .select("*")
-          .eq("jugador_id", jugador.id)
-          .single();
+        // Cargar habilidades del jugador y de todos para el promedio
+        const [{ data }, { data: todas }] = await Promise.all([
+          supabase
+            .from("habilidades_jugador")
+            .select("*")
+            .eq("jugador_id", jugador.id)
+            .single(),
+          supabase
+            .from("habilidades_jugador")
+            .select("overall"),
+        ]);
         setHabilidades(data);
+        if (todas && todas.length > 0) {
+          const sum = todas.reduce((acc, h) => acc + (h.overall || 0), 0);
+          setPromedioGrupo(Math.round(sum / todas.length));
+        }
       } catch {
         setHabilidades(null);
       } finally {
@@ -47,7 +58,7 @@ export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModa
             <p className="text-white text-sm opacity-70">Cargando...</p>
           </div>
         ) : (
-          <FifaCard jugador={jugador} habilidades={habilidades} />
+          <FifaCard jugador={jugador} habilidades={habilidades} promedioGrupo={promedioGrupo} />
         )}
       </div>
     </div>
