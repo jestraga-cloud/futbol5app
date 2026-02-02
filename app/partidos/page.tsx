@@ -63,7 +63,7 @@ export default function Partidos() {
     <main className="min-h-screen pb-24">
       <div className="max-w-lg mx-auto p-4">
         <h1 className="text-2xl font-bold text-white mb-6 text-center">
-          📋 Historial de Partidos
+          Historial de Partidos
         </h1>
 
         {/* Error */}

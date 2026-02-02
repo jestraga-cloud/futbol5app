@@ -7,17 +7,17 @@
 
   /* Theme tokens */
   --bg-body: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-card-subtle: #f9fafb;
-  --bg-input: white;
-  --bg-nav: white;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --border-color: #e5e7eb;
-  --border-input: #d1d5db;
-  --hover-bg: #f0fdf4;
-  --btn-secondary-bg: white;
+  --bg-card: rgba(255, 255, 255, 0.12);
+  --bg-card-subtle: rgba(255, 255, 255, 0.08);
+  --bg-input: rgba(255, 255, 255, 0.15);
+  --bg-nav: rgba(0, 50, 30, 0.85);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --border-color: rgba(255, 255, 255, 0.15);
+  --border-input: rgba(255, 255, 255, 0.2);
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.1);
 }
 
 .dark {
@@ -53,13 +53,10 @@ body {
 
 .card {
   background: var(--bg-card);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   color: var(--text-primary);
-}
-
-.dark .card {
   border: 1px solid var(--border-color);
 }
 
@@ -211,74 +208,74 @@ body {
   animation-delay: calc(var(--i, 0) * 40ms);
 }
 
-/* Dark mode overrides for common Tailwind patterns */
-.dark .bg-gray-50 { background: var(--bg-card-subtle) !important; }
-.dark .bg-gray-100 { background: rgba(40, 55, 50, 0.6) !important; }
-.dark .bg-gray-200 { background: rgba(50, 65, 60, 0.6) !important; }
-.dark .bg-white { background: var(--bg-card) !important; }
+/* Override Tailwind gray/white to use theme tokens in both modes */
+.bg-gray-50 { background: var(--bg-card-subtle) !important; }
+.bg-gray-100 { background: var(--bg-card-subtle) !important; }
+.bg-gray-200 { background: rgba(255, 255, 255, 0.1) !important; }
+.bg-white { background: var(--bg-card) !important; }
 
-.dark .text-gray-800 { color: var(--text-primary) !important; }
-.dark .text-gray-700 { color: var(--text-secondary) !important; }
-.dark .text-gray-600 { color: var(--text-secondary) !important; }
-.dark .text-gray-500 { color: var(--text-muted) !important; }
-.dark .text-gray-400 { color: var(--text-muted) !important; }
+.text-gray-800 { color: var(--text-primary) !important; }
+.text-gray-700 { color: var(--text-secondary) !important; }
+.text-gray-600 { color: var(--text-secondary) !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-muted) !important; }
 
-.dark .border-gray-200 { border-color: var(--border-color) !important; }
-.dark .border-gray-300 { border-color: var(--border-input) !important; }
+.border-gray-200 { border-color: var(--border-color) !important; }
+.border-gray-300 { border-color: var(--border-input) !important; }
 
-/* Dark mode inputs */
-.dark input, .dark select {
+/* Inputs */
+input, select {
   background: var(--bg-input) !important;
   color: var(--text-primary) !important;
   border-color: var(--border-input) !important;
 }
 
-/* Dark mode nav */
-.dark nav {
+/* Nav */
+nav {
   background: var(--bg-nav) !important;
   border-color: var(--border-color) !important;
 }
 
-.dark .bg-green-50 { background: rgba(34, 197, 94, 0.1) !important; }
-.dark .bg-blue-50 { background: rgba(59, 130, 246, 0.1) !important; }
-.dark .bg-red-50 { background: rgba(239, 68, 68, 0.1) !important; }
-.dark .bg-purple-50 { background: rgba(168, 85, 247, 0.1) !important; }
-.dark .bg-yellow-50 { background: rgba(234, 179, 8, 0.1) !important; }
-.dark .bg-orange-50 { background: rgba(249, 115, 22, 0.1) !important; }
+/* Colored backgrounds - translucent in both modes */
+.bg-green-50 { background: rgba(34, 197, 94, 0.1) !important; }
+.bg-blue-50 { background: rgba(59, 130, 246, 0.1) !important; }
+.bg-red-50 { background: rgba(239, 68, 68, 0.1) !important; }
+.bg-purple-50 { background: rgba(168, 85, 247, 0.1) !important; }
+.bg-yellow-50 { background: rgba(234, 179, 8, 0.1) !important; }
+.bg-orange-50 { background: rgba(249, 115, 22, 0.1) !important; }
 
-/* Dark mode for colored backgrounds with text */
-.dark .bg-blue-100 { background: rgba(59, 130, 246, 0.2) !important; }
-.dark .bg-red-100 { background: rgba(239, 68, 68, 0.2) !important; }
-.dark .bg-purple-100 { background: rgba(168, 85, 247, 0.2) !important; }
-.dark .bg-green-100 { background: rgba(34, 197, 94, 0.2) !important; }
-.dark .bg-yellow-100 { background: rgba(234, 179, 8, 0.2) !important; }
-.dark .bg-orange-100 { background: rgba(249, 115, 22, 0.2) !important; }
+.bg-blue-100 { background: rgba(59, 130, 246, 0.2) !important; }
+.bg-red-100 { background: rgba(239, 68, 68, 0.2) !important; }
+.bg-purple-100 { background: rgba(168, 85, 247, 0.2) !important; }
+.bg-green-100 { background: rgba(34, 197, 94, 0.2) !important; }
+.bg-yellow-100 { background: rgba(234, 179, 8, 0.2) !important; }
+.bg-orange-100 { background: rgba(249, 115, 22, 0.2) !important; }
 
-/* Dark mode text on colored badges */
-.dark .text-blue-800 { color: #93c5fd !important; }
-.dark .text-red-800 { color: #fca5a5 !important; }
-.dark .text-purple-800 { color: #d8b4fe !important; }
-.dark .text-green-800 { color: #86efac !important; }
-.dark .text-yellow-800 { color: #fde047 !important; }
-.dark .text-orange-800 { color: #fdba74 !important; }
+/* Colored text - light versions for both modes (dark backgrounds) */
+.text-blue-800 { color: #93c5fd !important; }
+.text-red-800 { color: #fca5a5 !important; }
+.text-purple-800 { color: #d8b4fe !important; }
+.text-green-800 { color: #86efac !important; }
+.text-yellow-800 { color: #fde047 !important; }
+.text-orange-800 { color: #fdba74 !important; }
 
-.dark .text-blue-700 { color: #93c5fd !important; }
-.dark .text-red-700 { color: #fca5a5 !important; }
-.dark .text-green-700 { color: #86efac !important; }
-.dark .text-green-600 { color: #4ade80 !important; }
-.dark .text-yellow-600 { color: #fde047 !important; }
-.dark .text-amber-600 { color: #fbbf24 !important; }
-.dark .text-blue-600 { color: #60a5fa !important; }
-.dark .text-red-600 { color: #f87171 !important; }
-.dark .text-purple-600 { color: #c084fc !important; }
-.dark .text-red-400 { color: #f87171 !important; }
-.dark .text-red-500 { color: #ef4444 !important; }
-.dark .text-blue-500 { color: #3b82f6 !important; }
+.text-blue-700 { color: #93c5fd !important; }
+.text-red-700 { color: #fca5a5 !important; }
+.text-green-700 { color: #86efac !important; }
+.text-green-600 { color: #4ade80 !important; }
+.text-yellow-600 { color: #fde047 !important; }
+.text-amber-600 { color: #fbbf24 !important; }
+.text-blue-600 { color: #60a5fa !important; }
+.text-red-600 { color: #f87171 !important; }
+.text-purple-600 { color: #c084fc !important; }
+.text-red-400 { color: #f87171 !important; }
+.text-red-500 { color: #ef4444 !important; }
+.text-blue-500 { color: #3b82f6 !important; }
 
-/* Dark ProximoPartidoBanner gradient */
-.dark .from-purple-50 { --tw-gradient-from: rgba(168, 85, 247, 0.1) !important; }
-.dark .to-blue-50 { --tw-gradient-to: rgba(59, 130, 246, 0.1) !important; }
-.dark .border-purple-200 { border-color: rgba(168, 85, 247, 0.3) !important; }
+/* ProximoPartidoBanner gradient */
+.from-purple-50 { --tw-gradient-from: rgba(168, 85, 247, 0.1) !important; }
+.to-blue-50 { --tw-gradient-to: rgba(59, 130, 246, 0.1) !important; }
+.border-purple-200 { border-color: rgba(168, 85, 247, 0.3) !important; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {

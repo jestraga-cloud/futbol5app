@@ -215,7 +215,7 @@ export default function NuevoPartido() {
     <main className="min-h-screen pb-24">
       <div className="max-w-lg mx-auto p-4">
         <h1 className="text-2xl font-bold text-white mb-6 text-center">
-          ⚽ Nuevo Partido
+          Nuevo Partido
         </h1>
 
         {/* Tipo de partido */}

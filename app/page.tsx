@@ -45,7 +45,7 @@ export default function Home() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">⚽ Futbol 5</h1>
+            <h1 className="text-2xl font-bold text-white">Futbol 5</h1>
             <p className="text-sm text-white/80">Registro de partidos entre amigos</p>
           </div>
           <DarkModeToggle />

@@ -234,7 +234,7 @@ export default function ProximoPartido() {
     <main className="min-h-screen pb-24">
       <div className="max-w-lg mx-auto p-4">
         <h1 className="text-2xl font-bold text-white mb-2 text-center">
-          🎯 Próximo Partido
+          Próximo Partido
         </h1>
         <p className="text-white/80 text-center mb-6 capitalize">{fechaFormateada}</p>
 
