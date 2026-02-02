@@ -35,3 +35,18 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# PWA (generated at build time)
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+
+.vercel
+
+# Claude
+.claude/
+
+# Temp files
+nul
+tmpclaude-*

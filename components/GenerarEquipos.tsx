@@ -53,14 +53,16 @@ export default function GenerarEquipos({ jugadores, estadisticas }: Props) {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Error al generar equipos");
+        throw new Error(data.error || "Error al generar equipos");
       }
 
-      const data = await response.json();
       setEquipos(data);
     } catch (err) {
-      setError("Error al generar equipos. Intentá de nuevo.");
+      const errorMsg = err instanceof Error ? err.message : "Error desconocido";
+      setError(errorMsg);
       console.error(err);
     } finally {
       setCargando(false);
@@ -70,16 +72,16 @@ export default function GenerarEquipos({ jugadores, estadisticas }: Props) {
   return (
     <div className="card p-4">
       <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <span>🤖</span> Generar Equipos con IA
+        <span>⚖️</span> Generar Equipos
       </h2>
 
       <p className="text-sm text-gray-600 mb-4">
-        Seleccioná los jugadores que van a jugar y la IA armará los equipos más
-        parejos posibles basándose en el historial.
+        Seleccioná los jugadores que van a jugar y el sistema armará los equipos
+        más parejos posibles basándose en el historial.
       </p>
 
       <div className="grid grid-cols-2 gap-2 mb-4">
-        {jugadores.map((jugador) => (
+        {[...jugadores].sort((a, b) => (a.apodo || a.nombre).localeCompare(b.apodo || b.nombre)).map((jugador) => (
           <button
             key={jugador.id}
             onClick={() => toggleJugador(jugador.id)}
@@ -152,7 +154,7 @@ export default function GenerarEquipos({ jugadores, estadisticas }: Props) {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="font-semibold text-gray-700 mb-2">
-              💡 Análisis de la IA:
+              💡 Análisis:
             </h4>
             <p className="text-sm text-gray-600">{equipos.explicacion}</p>
           </div>
