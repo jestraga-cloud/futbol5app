@@ -4,10 +4,39 @@
   --field-green: #22c55e;
   --field-dark: #16a34a;
   --field-light: #4ade80;
+
+  /* Theme tokens */
+  --bg-body: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-subtle: #f9fafb;
+  --bg-input: white;
+  --bg-nav: white;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --border-input: #d1d5db;
+  --hover-bg: #f0fdf4;
+  --btn-secondary-bg: white;
+}
+
+.dark {
+  --bg-body: linear-gradient(135deg, #0a1f1a 0%, #0f2e24 50%, #133d2e 100%);
+  --bg-card: rgba(30, 41, 38, 0.92);
+  --bg-card-subtle: rgba(40, 55, 50, 0.8);
+  --bg-input: rgba(20, 30, 27, 0.8);
+  --bg-nav: #1a2e28;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-input: rgba(255, 255, 255, 0.15);
+  --hover-bg: rgba(34, 197, 94, 0.1);
+  --btn-secondary-bg: rgba(30, 41, 38, 0.9);
 }
 
 body {
-  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  background: var(--bg-body);
   min-height: 100vh;
 }
 
@@ -23,10 +52,15 @@ body {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  color: var(--text-primary);
+}
+
+.dark .card {
+  border: 1px solid var(--border-color);
 }
 
 .btn-primary {
@@ -44,8 +78,13 @@ body {
   box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
 }
 
+.btn-primary:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
 .btn-secondary {
-  background: white;
+  background: var(--btn-secondary-bg);
   color: #16a34a;
   padding: 12px 24px;
   border-radius: 12px;
@@ -55,7 +94,11 @@ body {
 }
 
 .btn-secondary:hover {
-  background: #f0fdf4;
+  background: var(--hover-bg);
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);
 }
 
 .soccer-ball {
@@ -73,12 +116,23 @@ body {
   border: 3px solid #fbbf24;
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 8px 32px rgba(0, 0, 0, 0.4);
-  width: 280px;
+  width: 100%;
+  max-width: 320px;
   min-height: 400px;
   padding: 20px;
   color: white;
   position: relative;
   overflow: hidden;
+  animation: cardGlow 3s ease-in-out infinite;
+}
+
+@keyframes cardGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 8px 32px rgba(0, 0, 0, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.5), 0 8px 32px rgba(0, 0, 0, 0.4); }
+}
+
+.dark .fifa-card {
+  background: linear-gradient(135deg, #0f2419 0%, #1a3a2d 40%, #2d5a44 100%);
 }
 
 .fifa-card::before {
@@ -129,4 +183,87 @@ body {
 
 .animate-scale-in {
   animation: scaleIn 0.25s ease-out;
+}
+
+/* Slide up animation for modals */
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Fade in up for list items */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out both;
+}
+
+/* Stagger delay utility (set --i via style) */
+.stagger-item {
+  animation: fadeInUp 0.3s ease-out both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+/* Dark mode overrides for common Tailwind patterns */
+.dark .bg-gray-50 { background: var(--bg-card-subtle) !important; }
+.dark .bg-gray-100 { background: rgba(40, 55, 50, 0.6) !important; }
+.dark .bg-gray-200 { background: rgba(50, 65, 60, 0.6) !important; }
+.dark .bg-white { background: var(--bg-card) !important; }
+
+.dark .text-gray-800 { color: var(--text-primary) !important; }
+.dark .text-gray-700 { color: var(--text-secondary) !important; }
+.dark .text-gray-600 { color: var(--text-secondary) !important; }
+.dark .text-gray-500 { color: var(--text-muted) !important; }
+.dark .text-gray-400 { color: var(--text-muted) !important; }
+
+.dark .border-gray-200 { border-color: var(--border-color) !important; }
+.dark .border-gray-300 { border-color: var(--border-input) !important; }
+
+/* Dark mode inputs */
+.dark input, .dark select {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-input) !important;
+}
+
+/* Dark mode nav */
+.dark nav {
+  background: var(--bg-nav) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark .bg-green-50 { background: rgba(34, 197, 94, 0.1) !important; }
+.dark .bg-blue-50 { background: rgba(59, 130, 246, 0.1) !important; }
+.dark .bg-red-50 { background: rgba(239, 68, 68, 0.1) !important; }
+.dark .bg-purple-50 { background: rgba(168, 85, 247, 0.1) !important; }
+.dark .bg-yellow-50 { background: rgba(234, 179, 8, 0.1) !important; }
+.dark .bg-orange-50 { background: rgba(249, 115, 22, 0.1) !important; }
+
+/* Dark mode for colored backgrounds with text */
+.dark .bg-blue-100 { background: rgba(59, 130, 246, 0.15) !important; }
+.dark .bg-red-100 { background: rgba(239, 68, 68, 0.15) !important; }
+.dark .bg-purple-100 { background: rgba(168, 85, 247, 0.15) !important; }
+.dark .bg-green-100 { background: rgba(34, 197, 94, 0.15) !important; }
+.dark .bg-yellow-100 { background: rgba(234, 179, 8, 0.15) !important; }
+.dark .bg-orange-100 { background: rgba(249, 115, 22, 0.15) !important; }
+
+/* Dark ProximoPartidoBanner gradient */
+.dark .from-purple-50 { --tw-gradient-from: rgba(168, 85, 247, 0.1) !important; }
+.dark .to-blue-50 { --tw-gradient-to: rgba(59, 130, 246, 0.1) !important; }
+.dark .border-purple-200 { border-color: rgba(168, 85, 247, 0.3) !important; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

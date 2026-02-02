@@ -1,59 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import Navigation from "@/components/Navigation";
+import ErrorMessage from "@/components/ErrorMessage";
 import { supabase, Jugador } from "@/lib/supabase";
 import FifaCardModal from "@/components/FifaCardModal";
+import { useJugadores } from "@/hooks/useJugadores";
+import AdminGuard from "@/components/AdminGuard";
 
 export default function Jugadores() {
-  const [jugadores, setJugadores] = useState<Jugador[]>([]);
+  const { jugadores, cargando, error: fetchError, mutate } = useJugadores();
   const [nombre, setNombre] = useState("");
   const [apodo, setApodo] = useState("");
-  const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [editando, setEditando] = useState<string | null>(null);
   const [jugadorSeleccionado, setJugadorSeleccionado] = useState<Jugador | null>(null);
-
-  useEffect(() => {
-    cargarJugadores();
-  }, []);
-
-  const cargarJugadores = async () => {
-    try {
-      const { data } = await supabase
-        .from("jugadores")
-        .select("*")
-        .order("nombre");
-      if (data) setJugadores(data);
-    } catch (error) {
-      console.error("Error cargando jugadores:", error);
-    } finally {
-      setCargando(false);
-    }
-  };
 
   const agregarJugador = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre.trim()) return;
 
     setGuardando(true);
+    setError(null);
     try {
-      const { data, error } = await supabase
+      const { error: dbError } = await supabase
         .from("jugadores")
         .insert({ nombre: nombre.trim(), apodo: apodo.trim() || null })
         .select()
         .single();
 
-      if (error) throw error;
-      if (data) {
-        setJugadores([...jugadores, data].sort((a, b) =>
-          a.nombre.localeCompare(b.nombre)
-        ));
-        setNombre("");
-        setApodo("");
-      }
-    } catch (error) {
-      console.error("Error agregando jugador:", error);
+      if (dbError) throw dbError;
+      setNombre("");
+      setApodo("");
+      mutate();
+      toast.success("Jugador agregado");
+    } catch (err) {
+      console.error("Error agregando jugador:", err);
+      toast.error("No se pudo agregar el jugador");
     } finally {
       setGuardando(false);
     }
@@ -62,11 +47,15 @@ export default function Jugadores() {
   const eliminarJugador = async (id: string) => {
     if (!confirm("¿Seguro que querés eliminar este jugador?")) return;
 
+    setError(null);
     try {
-      await supabase.from("jugadores").delete().eq("id", id);
-      setJugadores(jugadores.filter((j) => j.id !== id));
-    } catch (error) {
-      console.error("Error eliminando jugador:", error);
+      const { error: dbError } = await supabase.from("jugadores").delete().eq("id", id);
+      if (dbError) throw dbError;
+      mutate();
+      toast.success("Jugador eliminado");
+    } catch (err) {
+      console.error("Error eliminando jugador:", err);
+      toast.error("No se pudo eliminar el jugador");
     }
   };
 
@@ -80,26 +69,22 @@ export default function Jugadores() {
     if (!editando || !nombre.trim()) return;
 
     setGuardando(true);
+    setError(null);
     try {
-      const { error } = await supabase
+      const { error: dbError } = await supabase
         .from("jugadores")
         .update({ nombre: nombre.trim(), apodo: apodo.trim() || null })
         .eq("id", editando);
 
-      if (error) throw error;
-
-      setJugadores(
-        jugadores.map((j) =>
-          j.id === editando
-            ? { ...j, nombre: nombre.trim(), apodo: apodo.trim() || undefined }
-            : j
-        )
-      );
+      if (dbError) throw dbError;
       setEditando(null);
       setNombre("");
       setApodo("");
-    } catch (error) {
-      console.error("Error actualizando jugador:", error);
+      mutate();
+      toast.success("Jugador actualizado");
+    } catch (err) {
+      console.error("Error actualizando jugador:", err);
+      toast.error("No se pudo guardar la edicion");
     } finally {
       setGuardando(false);
     }
@@ -129,57 +114,73 @@ export default function Jugadores() {
           👥 Jugadores
         </h1>
 
-        {/* Formulario */}
-        <div className="card p-4 mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            {editando ? "✏️ Editar jugador" : "➕ Agregar jugador"}
-          </h2>
-          <form onSubmit={editando ? (e) => { e.preventDefault(); guardarEdicion(); } : agregarJugador}>
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre completo *
-              </label>
-              <input
-                type="text"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                placeholder="Ej: Juan Pérez"
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Apodo (opcional)
-              </label>
-              <input
-                type="text"
-                value={apodo}
-                onChange={(e) => setApodo(e.target.value)}
-                placeholder="Ej: Juancho"
-                className="w-full p-3 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={guardando || !nombre.trim()}
-                className="btn-primary flex-1 disabled:opacity-50"
-              >
-                {guardando ? "Guardando..." : editando ? "Guardar cambios" : "Agregar"}
-              </button>
-              {editando && (
+        {/* Error */}
+        {(error || fetchError) && (
+          <div className="mb-4">
+            <ErrorMessage
+              mensaje={error || "No se pudieron cargar los jugadores."}
+              onReintentar={() => { setError(null); mutate(); }}
+            />
+          </div>
+        )}
+
+        {/* Formulario (solo admin) */}
+        <AdminGuard fallback={
+          <div className="card p-4 mb-6 text-center text-gray-400 text-sm">
+            🔒 Toca para acceder como admin y gestionar jugadores
+          </div>
+        }>
+          <div className="card p-4 mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              {editando ? "✏️ Editar jugador" : "➕ Agregar jugador"}
+            </h2>
+            <form onSubmit={editando ? (e) => { e.preventDefault(); guardarEdicion(); } : agregarJugador}>
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre completo *
+                </label>
+                <input
+                  type="text"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Ej: Juan Pérez"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Apodo (opcional)
+                </label>
+                <input
+                  type="text"
+                  value={apodo}
+                  onChange={(e) => setApodo(e.target.value)}
+                  placeholder="Ej: Juancho"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div className="flex gap-2">
                 <button
-                  type="button"
-                  onClick={cancelarEdicion}
-                  className="btn-secondary"
+                  type="submit"
+                  disabled={guardando || !nombre.trim()}
+                  className="btn-primary flex-1 disabled:opacity-50"
                 >
-                  Cancelar
+                  {guardando ? "Guardando..." : editando ? "Guardar cambios" : "Agregar"}
                 </button>
-              )}
-            </div>
-          </form>
-        </div>
+                {editando && (
+                  <button
+                    type="button"
+                    onClick={cancelarEdicion}
+                    className="btn-secondary"
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+        </AdminGuard>
 
         {/* Lista de jugadores */}
         <div className="card p-4">
@@ -193,10 +194,11 @@ export default function Jugadores() {
             </p>
           ) : (
             <div className="space-y-2">
-              {jugadores.map((jugador) => (
+              {jugadores.map((jugador, index) => (
                 <div
                   key={jugador.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg stagger-item"
+                  style={{ "--i": index } as React.CSSProperties}
                 >
                   <div
                     className="cursor-pointer hover:opacity-70 transition-opacity"
@@ -209,20 +211,22 @@ export default function Jugadores() {
                       <p className="text-xs text-gray-500">{jugador.nombre}</p>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => iniciarEdicion(jugador)}
-                      className="text-blue-500 hover:text-blue-700 text-sm px-2"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => eliminarJugador(jugador.id)}
-                      className="text-red-400 hover:text-red-600 text-sm px-2"
-                    >
-                      🗑️
-                    </button>
-                  </div>
+                  <AdminGuard>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => iniciarEdicion(jugador)}
+                        className="text-blue-500 hover:text-blue-700 text-sm px-2"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => eliminarJugador(jugador.id)}
+                        className="text-red-400 hover:text-red-600 text-sm px-2"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </AdminGuard>
                 </div>
               ))}
             </div>

@@ -1,43 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import Navigation from "@/components/Navigation";
+import ErrorMessage from "@/components/ErrorMessage";
 import { supabase, PartidoConJugadores } from "@/lib/supabase";
+import { usePartidos } from "@/hooks/usePartidos";
+import AdminGuard from "@/components/AdminGuard";
 
 export default function Partidos() {
-  const [partidos, setPartidos] = useState<PartidoConJugadores[]>([]);
-  const [cargando, setCargando] = useState(true);
-
-  useEffect(() => {
-    cargarPartidos();
-  }, []);
-
-  const cargarPartidos = async () => {
-    try {
-      const { data } = await supabase
-        .from("partidos")
-        .select(`
-          *,
-          participaciones (
-            *,
-            jugador:jugadores (*)
-          )
-        `)
-        .order("fecha", { ascending: false });
-
-      if (data) setPartidos(data as PartidoConJugadores[]);
-    } catch (error) {
-      console.error("Error cargando partidos:", error);
-    } finally {
-      setCargando(false);
-    }
-  };
+  const { partidos, cargando, error: fetchError, mutate } = usePartidos();
+  const [error, setError] = useState<string | null>(null);
 
   const eliminarPartido = async (id: string) => {
     if (!confirm("¿Seguro que querés eliminar este partido?")) return;
 
-    await supabase.from("partidos").delete().eq("id", id);
-    setPartidos(partidos.filter((p) => p.id !== id));
+    setError(null);
+    try {
+      const { error: dbError } = await supabase.from("partidos").delete().eq("id", id);
+      if (dbError) throw dbError;
+      mutate();
+      toast.success("Partido eliminado");
+    } catch (err) {
+      console.error("Error eliminando partido:", err);
+      toast.error("No se pudo eliminar el partido");
+    }
   };
 
   const formatearFecha = (fecha: string) => {
@@ -79,7 +66,17 @@ export default function Partidos() {
           📋 Historial de Partidos
         </h1>
 
-        {partidos.length === 0 ? (
+        {/* Error */}
+        {(error || fetchError) && (
+          <div className="mb-4">
+            <ErrorMessage
+              mensaje={error || "No se pudieron cargar los partidos."}
+              onReintentar={() => { setError(null); mutate(); }}
+            />
+          </div>
+        )}
+
+        {partidos.length === 0 && !fetchError ? (
           <div className="card p-8 text-center">
             <p className="text-6xl mb-4">📋</p>
             <p className="text-gray-500 mb-4">No hay partidos registrados</p>
@@ -89,7 +86,7 @@ export default function Partidos() {
           </div>
         ) : (
           <div className="space-y-4">
-            {partidos.map((partido) => {
+            {partidos.map((partido, index) => {
               const resultado = getResultado(partido);
               const jugadoresA = partido.participaciones
                 ?.filter((p) => p.equipo === "A")
@@ -99,7 +96,7 @@ export default function Partidos() {
                 .map((p) => p.jugador?.apodo || p.jugador?.nombre);
 
               return (
-                <div key={partido.id} className="card p-4">
+                <div key={partido.id} className="card p-4 stagger-item" style={{ "--i": index } as React.CSSProperties}>
                   <div className="flex justify-between items-start mb-3">
                     <div className="text-sm text-gray-500">
                       {formatearFecha(partido.fecha)}
@@ -109,12 +106,14 @@ export default function Partidos() {
                         {superficieEmoji[partido.superficie]}{" "}
                         {partido.superficie}
                       </span>
-                      <button
-                        onClick={() => eliminarPartido(partido.id)}
-                        className="text-red-400 hover:text-red-600 text-sm"
-                      >
-                        🗑️
-                      </button>
+                      <AdminGuard>
+                        <button
+                          onClick={() => eliminarPartido(partido.id)}
+                          className="text-red-400 hover:text-red-600 text-sm"
+                        >
+                          🗑️
+                        </button>
+                      </AdminGuard>
                     </div>
                   </div>
 

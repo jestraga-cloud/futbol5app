@@ -13,6 +13,13 @@ function getStatColor(value: number): string {
   return "#f87171";
 }
 
+function getRankBadge(overall: number): { emoji: string; label: string } {
+  if (overall >= 80) return { emoji: "💎", label: "Elite" };
+  if (overall >= 70) return { emoji: "🥇", label: "Pro" };
+  if (overall >= 60) return { emoji: "🥈", label: "Amateur" };
+  return { emoji: "🥉", label: "Rookie" };
+}
+
 function RadarChart({ habilidades }: { habilidades: HabilidadesJugador }) {
   const cx = 100;
   const cy = 100;
@@ -122,13 +129,19 @@ export default function FifaCard({ jugador, habilidades }: FifaCardProps) {
     );
   }
 
+  const rank = getRankBadge(habilidades.overall);
+
   return (
     <div className="fifa-card">
-      {/* Header: Overall + Position */}
+      {/* Header: Overall + Rank badge */}
       <div className="flex items-start justify-between mb-1">
         <div>
           <div className="fifa-card-overall">{habilidades.overall}</div>
           <div className="text-xs font-bold opacity-60 tracking-wider">F5</div>
+        </div>
+        <div className="text-right">
+          <div className="text-xl">{rank.emoji}</div>
+          <div className="text-[10px] font-bold text-amber-300 tracking-wider">{rank.label}</div>
         </div>
       </div>
 
@@ -140,14 +153,21 @@ export default function FifaCard({ jugador, habilidades }: FifaCardProps) {
         <RadarChart habilidades={habilidades} />
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+      {/* Stats with bars */}
+      <div className="space-y-1.5">
         {HABILIDADES_KEYS.map((key) => {
           const value = habilidades[key] as number;
+          const color = getStatColor(value);
           return (
-            <div key={key} className="flex justify-between items-center text-sm">
-              <span className="font-semibold opacity-70">{HABILIDADES_LABELS[key]}</span>
-              <span className="font-bold" style={{ color: getStatColor(value) }}>
+            <div key={key} className="flex items-center gap-2 text-sm">
+              <span className="font-semibold opacity-70 w-10 text-xs">{HABILIDADES_LABELS[key]}</span>
+              <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${value}%`, backgroundColor: color }}
+                />
+              </div>
+              <span className="font-bold w-7 text-right text-xs" style={{ color }}>
                 {value}
               </span>
             </div>
