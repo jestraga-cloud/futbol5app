@@ -20,6 +20,7 @@ export default function VotarMVP({ partido }: Props) {
   const [miVoto, setMiVoto] = useState<string | null>(null);
   const [votando, setVotando] = useState(false);
   const [cargado, setCargado] = useState(false);
+  const [verResultados, setVerResultados] = useState(false);
 
   const participantes = partido.participaciones
     .map((p) => p.jugador)
@@ -105,28 +106,28 @@ export default function VotarMVP({ partido }: Props) {
         </button>
       ) : (
         <div className="animate-fade-in-up">
-          <p className="text-sm font-semibold text-gray-700 mb-2">
-            {miVoto ? "Resultado MVP" : "Elegir MVP"}
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            {miVoto || verResultados ? "Resultado MVP" : "Elegir MVP"}
           </p>
 
-          {miVoto ? (
+          {miVoto || verResultados ? (
             // Mostrar resultados
             <div className="space-y-1.5">
               {votos.map((v) => {
                 const porcentaje = totalVotos > 0 ? Math.round((v.votos / totalVotos) * 100) : 0;
                 return (
                   <div key={v.jugador.id} className="flex items-center gap-2">
-                    <p className={`text-sm flex-1 ${v.jugador.id === miVoto ? "font-semibold text-green-600" : "text-gray-600"}`}>
+                    <p className={`text-sm flex-1 ${v.jugador.id === miVoto ? "font-semibold text-green-600 dark:text-green-400" : "text-gray-600 dark:text-gray-400"}`}>
                       {v.jugador.apodo || v.jugador.nombre}
                       {v.jugador.id === miVoto && " (tu voto)"}
                     </p>
-                    <div className="w-20 bg-gray-200 rounded-full h-2">
+                    <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div
                         className="bg-green-500 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${porcentaje}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-500 w-6 text-right">{v.votos}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 w-6 text-right">{v.votos}</span>
                   </div>
                 );
               })}
@@ -139,12 +140,30 @@ export default function VotarMVP({ partido }: Props) {
                   key={j.id}
                   onClick={() => votar(j.id)}
                   disabled={votando}
-                  className="text-sm p-2 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-700 transition-colors text-gray-700 disabled:opacity-50"
+                  className="text-sm p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition-colors text-gray-700 dark:text-gray-300 disabled:opacity-50"
                 >
                   {j.apodo || j.nombre}
                 </button>
               ))}
             </div>
+          )}
+
+          {!miVoto && !verResultados && (
+            <button
+              onClick={() => setVerResultados(true)}
+              className="w-full mt-2 text-xs text-gray-400 hover:text-green-600 dark:hover:text-green-400"
+            >
+              Ver resultados sin votar
+            </button>
+          )}
+
+          {verResultados && !miVoto && (
+            <button
+              onClick={() => setVerResultados(false)}
+              className="w-full mt-2 text-xs text-green-600 dark:text-green-400 hover:text-green-700"
+            >
+              ← Volver a votar
+            </button>
           )}
 
           <button
