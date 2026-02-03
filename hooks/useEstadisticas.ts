@@ -15,6 +15,7 @@ export function useEstadisticas() {
   return {
     estadisticas,
     jugadores,
+    partidos,
     cargando: cargandoJ || cargandoP,
     error: errorJ || errorP,
   };

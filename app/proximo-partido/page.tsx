@@ -8,6 +8,8 @@ import { supabase, Jugador, PartidoConJugadores, Prediccion } from "@/lib/supaba
 import { getSessionId } from "@/lib/session";
 import { procesarPartidoMundial } from "@/lib/mundial";
 import AdminGuard from "@/components/AdminGuard";
+import WhatsAppShareButton from "@/components/WhatsAppShareButton";
+import { formatUpcomingMatch } from "@/lib/share-utils";
 
 export default function ProximoPartido() {
   const router = useRouter();
@@ -274,6 +276,11 @@ export default function ProximoPartido() {
                 ))}
               </ul>
             </div>
+          </div>
+
+          {/* Compartir por WhatsApp */}
+          <div className="mt-3 pt-3 border-t border-gray-200 flex justify-end">
+            <WhatsAppShareButton text={formatUpcomingMatch(partido)} />
           </div>
         </div>
 

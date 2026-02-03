@@ -1,16 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { EstadisticasJugador } from "@/lib/supabase";
+import { EstadisticasJugador, Jugador, PartidoConJugadores } from "@/lib/supabase";
+import HeadToHeadModal from "./HeadToHeadModal";
 
 interface Props {
   estadisticas: EstadisticasJugador[];
+  partidos?: PartidoConJugadores[];
+  jugadores?: Jugador[];
 }
 
 type OrdenTipo = "victorias" | "winrate" | "asistencias";
 
-export default function RankingTable({ estadisticas }: Props) {
+export default function RankingTable({ estadisticas, partidos, jugadores }: Props) {
   const [orden, setOrden] = useState<OrdenTipo>("victorias");
+  const [jugadorSeleccionado, setJugadorSeleccionado] = useState<string | null>(null);
 
   const getMedal = (index: number) => {
     if (index === 0) return "🥇";
@@ -21,22 +25,23 @@ export default function RankingTable({ estadisticas }: Props) {
 
   const estadisticasOrdenadas = [...estadisticas].sort((a, b) => {
     if (orden === "victorias") {
-      // Primero por victorias, luego por winrate
       if (b.victorias !== a.victorias) {
         return b.victorias - a.victorias;
       }
       return b.porcentaje_victorias - a.porcentaje_victorias;
     } else if (orden === "winrate") {
-      // Primero por winrate, luego por partidos jugados
       if (b.porcentaje_victorias !== a.porcentaje_victorias) {
         return b.porcentaje_victorias - a.porcentaje_victorias;
       }
       return b.partidos_jugados - a.partidos_jugados;
     } else {
-      // Asistencias: primero por partidos jugados
       return b.partidos_jugados - a.partidos_jugados;
     }
   });
+
+  const estSeleccionado = jugadorSeleccionado
+    ? estadisticas.find((e) => e.jugador.id === jugadorSeleccionado)
+    : null;
 
   return (
     <div className="card p-4">
@@ -90,8 +95,9 @@ export default function RankingTable({ estadisticas }: Props) {
               key={est.jugador.id}
               className={`flex items-center justify-between p-3 rounded-lg stagger-item ${
                 index < 3 ? "bg-green-50" : "bg-gray-50"
-              }`}
+              } ${partidos ? "cursor-pointer hover:opacity-80" : ""}`}
               style={{ "--i": index } as React.CSSProperties}
+              onClick={partidos ? () => setJugadorSeleccionado(est.jugador.id) : undefined}
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg font-bold w-8 text-center">
@@ -122,6 +128,17 @@ export default function RankingTable({ estadisticas }: Props) {
             </div>
           ))}
         </div>
+      )}
+
+      {estSeleccionado && partidos && jugadores && (
+        <HeadToHeadModal
+          jugador={estSeleccionado.jugador}
+          jugadores={jugadores}
+          partidos={partidos}
+          estadisticas={estSeleccionado}
+          isOpen={true}
+          onClose={() => setJugadorSeleccionado(null)}
+        />
       )}
     </div>
   );

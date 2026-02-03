@@ -100,8 +100,9 @@ export default function Jugadores() {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl soccer-ball mb-4">⚽</div>
-          <p className="text-white text-lg">Cargando jugadores...</p>
+          <div className="text-6xl loading-ball">⚽</div>
+          <div className="loading-shadow" />
+          <p className="text-white text-lg mt-4 loading-text">Cargando jugadores...</p>
         </div>
       </main>
     );

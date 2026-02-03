@@ -54,7 +54,7 @@ export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModa
       <div onClick={(e) => e.stopPropagation()} className="animate-slide-up">
         {cargando ? (
           <div className="fifa-card flex flex-col items-center justify-center">
-            <div className="text-4xl soccer-ball mb-3">⚽</div>
+            <div className="text-4xl loading-ball mb-3">⚽</div>
             <p className="text-white text-sm opacity-70">Cargando...</p>
           </div>
         ) : (

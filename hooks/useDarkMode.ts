@@ -52,15 +52,10 @@ export function useDarkMode() {
     applyTheme(dark);
   }, []);
 
-  // Cycle: system → dark → light → system
+  // Simple toggle: dark ↔ light
   const toggle = useCallback(() => {
-    const next: Record<ThemeMode, ThemeMode> = {
-      system: "dark",
-      dark: "light",
-      light: "system",
-    };
-    setMode(next[mode]);
-  }, [mode, setMode]);
+    setMode(isDark ? "light" : "dark");
+  }, [isDark, setMode]);
 
   return { isDark, mode, setMode, toggle };
 }

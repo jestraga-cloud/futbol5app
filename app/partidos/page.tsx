@@ -7,6 +7,9 @@ import ErrorMessage from "@/components/ErrorMessage";
 import { supabase, PartidoConJugadores } from "@/lib/supabase";
 import { usePartidos } from "@/hooks/usePartidos";
 import AdminGuard from "@/components/AdminGuard";
+import VotarMVP from "@/components/VotarMVP";
+import WhatsAppShareButton from "@/components/WhatsAppShareButton";
+import { formatMVPInvite } from "@/lib/share-utils";
 
 export default function Partidos() {
   const { partidos, cargando, error: fetchError, mutate } = usePartidos();
@@ -36,11 +39,13 @@ export default function Partidos() {
     });
   };
 
-  const superficieEmoji: Record<string, string> = {
-    caucho: "🔴",
-    cemento: "⬜",
-    sintetico: "🟢",
+  const superficieClasses: Record<string, string> = {
+    sintetico: "bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-400",
+    caucho: "bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-400",
+    cemento: "bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-400",
   };
+
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   const getResultado = (partido: PartidoConJugadores) => {
     if (partido.goles_equipo_a > partido.goles_equipo_b) return "A";
@@ -52,8 +57,8 @@ export default function Partidos() {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl soccer-ball mb-4">⚽</div>
-          <p className="text-white text-lg">Cargando partidos...</p>
+          <div className="w-12 h-12 rounded-full border-4 border-white/30 border-t-white animate-spin mx-auto" />
+          <p className="text-white text-lg mt-4">Cargando partidos...</p>
         </div>
       </main>
     );
@@ -78,7 +83,11 @@ export default function Partidos() {
 
         {partidos.length === 0 && !fetchError ? (
           <div className="card p-8 text-center">
-            <p className="text-6xl mb-4">📋</p>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
             <p className="text-gray-500 mb-4">No hay partidos registrados</p>
             <a href="/nuevo-partido" className="btn-primary inline-block">
               Registrar primer partido
@@ -96,79 +105,77 @@ export default function Partidos() {
                 .map((p) => p.jugador?.apodo || p.jugador?.nombre);
 
               return (
-                <div key={partido.id} className="card p-4 stagger-item" style={{ "--i": index } as React.CSSProperties}>
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm text-gray-500">
+                <div key={partido.id} className="card overflow-hidden stagger-item" style={{ "--i": index } as React.CSSProperties}>
+                  {/* Header */}
+                  <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200/60 dark:border-gray-700/40">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       {formatearFecha(partido.fecha)}
-                    </div>
+                    </span>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm">
-                        {superficieEmoji[partido.superficie]}{" "}
+                      <span className={`text-xs px-2 py-0.5 rounded capitalize ${superficieClasses[partido.superficie]}`}>
                         {partido.superficie}
                       </span>
                       <AdminGuard>
                         <button
                           onClick={() => eliminarPartido(partido.id)}
-                          className="text-red-400 hover:text-red-600 text-sm"
+                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          aria-label="Eliminar partido"
                         >
-                          🗑️
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </AdminGuard>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <div
-                      className={`text-center flex-1 p-3 rounded-lg ${
-                        resultado === "A" ? "bg-blue-50" : "bg-gray-50"
-                      }`}
-                    >
-                      <p className="text-3xl font-bold text-blue-600">
-                        {partido.goles_equipo_a}
-                      </p>
-                      {resultado === "A" && (
-                        <span className="text-xs text-blue-500">🏆 Ganador</span>
-                      )}
-                    </div>
-                    <div className="px-4 text-gray-400">vs</div>
-                    <div
-                      className={`text-center flex-1 p-3 rounded-lg ${
-                        resultado === "B" ? "bg-red-50" : "bg-gray-50"
-                      }`}
-                    >
-                      <p className="text-3xl font-bold text-red-600">
-                        {partido.goles_equipo_b}
-                      </p>
-                      {resultado === "B" && (
-                        <span className="text-xs text-red-500">🏆 Ganador</span>
-                      )}
+                  {/* Scoreboard */}
+                  <div className="px-4 py-4">
+                    <div className="flex items-center">
+                      {/* Equipo A */}
+                      <div className={`flex-1 ${resultado === "B" ? "opacity-50" : ""}`}>
+                        <p className="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Equipo A</p>
+                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-snug">
+                          {jugadoresA?.join(", ") || "-"}
+                        </p>
+                      </div>
+
+                      {/* Score */}
+                      <div className="px-4 text-center flex-shrink-0">
+                        <div className="flex items-baseline">
+                          <span className={`text-2xl font-bold font-heading ${resultado === "A" ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500"}`}>
+                            {partido.goles_equipo_a}
+                          </span>
+                          <span className="text-gray-300 dark:text-gray-600 mx-2">-</span>
+                          <span className={`text-2xl font-bold font-heading ${resultado === "B" ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500"}`}>
+                            {partido.goles_equipo_b}
+                          </span>
+                        </div>
+                        {resultado === "empate" && (
+                          <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Empate</p>
+                        )}
+                      </div>
+
+                      {/* Equipo B */}
+                      <div className={`flex-1 text-right ${resultado === "A" ? "opacity-50" : ""}`}>
+                        <p className="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Equipo B</p>
+                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-snug">
+                          {jugadoresB?.join(", ") || "-"}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  {resultado === "empate" && (
-                    <p className="text-center text-sm text-gray-500 mb-3">
-                      ⚖️ Empate
-                    </p>
+                  {/* Footer: MVP + Share */}
+                  {partido.estado === "finalizado" && (
+                    <div className="px-4 py-3 border-t border-gray-200/60 dark:border-gray-700/40 flex items-center justify-between">
+                      <VotarMVP partido={partido} />
+                      <WhatsAppShareButton
+                        text={formatMVPInvite(partido, baseUrl)}
+                        label="Invitar a votar"
+                      />
+                    </div>
                   )}
-
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="font-semibold text-blue-600 mb-1">
-                        Equipo A
-                      </p>
-                      <p className="text-gray-600">
-                        {jugadoresA?.join(", ") || "-"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-red-600 mb-1">
-                        Equipo B
-                      </p>
-                      <p className="text-gray-600">
-                        {jugadoresB?.join(", ") || "-"}
-                      </p>
-                    </div>
-                  </div>
                 </div>
               );
             })}

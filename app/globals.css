@@ -6,8 +6,12 @@
   --field-light: #4ade80;
 
   /* Light theme tokens */
-  --bg-body: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
-  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-body: #15803d;
+  --grass-stripe-a: rgba(255, 255, 255, 0.06);
+  --grass-stripe-b: rgba(0, 0, 0, 0.04);
+  --grass-noise: rgba(255, 255, 255, 0.02);
+  --field-line-color: rgba(255, 255, 255, 0.10);
+  --bg-card: rgba(255, 255, 255, 0.7);
   --bg-card-subtle: #f3f4f6;
   --bg-input: white;
   --bg-nav: white;
@@ -21,8 +25,12 @@
 }
 
 .dark {
-  --bg-body: linear-gradient(135deg, #0a1a14 0%, #0d2419 50%, #112e22 100%);
-  --bg-card: #1a2b25;
+  --bg-body: #0f2e1c;
+  --grass-stripe-a: rgba(255, 255, 255, 0.03);
+  --grass-stripe-b: rgba(0, 0, 0, 0.08);
+  --grass-noise: rgba(255, 255, 255, 0.01);
+  --field-line-color: rgba(255, 255, 255, 0.06);
+  --bg-card: rgba(26, 43, 37, 0.7);
   --bg-card-subtle: #1f332c;
   --bg-input: #152320;
   --bg-nav: #141f1b;
@@ -36,31 +44,132 @@
 }
 
 body {
-  background: var(--bg-body);
+  background-color: var(--bg-body);
   min-height: 100vh;
+  position: relative;
 }
 
-.field-pattern {
+/* Grass mow stripes - fixed to viewport so they look identical on every page */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background-image:
     repeating-linear-gradient(
       0deg,
-      transparent,
-      transparent 40px,
-      rgba(255, 255, 255, 0.03) 40px,
-      rgba(255, 255, 255, 0.03) 80px
+      transparent 0px,
+      transparent 48px,
+      rgba(255, 255, 255, 0.05) 48px,
+      rgba(255, 255, 255, 0.05) 96px
     );
+}
+
+/* Field center line & circle overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    /* Horizontal center line */
+    linear-gradient(
+      to bottom,
+      transparent calc(50% - 1px),
+      var(--field-line-color) calc(50% - 1px),
+      var(--field-line-color) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ),
+    /* Vertical sidelines */
+    linear-gradient(
+      to right,
+      var(--field-line-color) 0px,
+      var(--field-line-color) 2px,
+      transparent 2px,
+      transparent calc(100% - 2px),
+      var(--field-line-color) calc(100% - 2px)
+    );
+}
+
+/* Center circle */
+body::after {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--field-line-color);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content sits above field lines */
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Surface-specific backgrounds (applied dynamically on nuevo-partido) */
+body.superficie-sintetico {
+  --bg-body: #22c55e;
+  --grass-stripe-a: rgba(255, 255, 255, 0.08);
+  --grass-stripe-b: rgba(0, 0, 0, 0.03);
+  transition: background-color 0.6s ease;
+}
+.dark body.superficie-sintetico {
+  --bg-body: #14532d;
+  --grass-stripe-a: rgba(255, 255, 255, 0.05);
+  --grass-stripe-b: rgba(0, 0, 0, 0.06);
+}
+
+body.superficie-caucho {
+  --bg-body: #15803d;
+  --grass-stripe-a: rgba(255, 255, 255, 0.06);
+  --grass-stripe-b: rgba(0, 0, 0, 0.04);
+  transition: background-color 0.6s ease;
+}
+.dark body.superficie-caucho {
+  --bg-body: #0f2e1c;
+  --grass-stripe-a: rgba(255, 255, 255, 0.03);
+  --grass-stripe-b: rgba(0, 0, 0, 0.08);
+}
+
+body.superficie-cemento {
+  --bg-body: #a8a29e;
+  --grass-stripe-a: rgba(255, 255, 255, 0.04);
+  --grass-stripe-b: rgba(0, 0, 0, 0.03);
+  --field-line-color: rgba(255, 255, 255, 0.08);
+  transition: background-color 0.6s ease;
+}
+.dark body.superficie-cemento {
+  --bg-body: #44403c;
+  --grass-stripe-a: rgba(255, 255, 255, 0.02);
+  --grass-stripe-b: rgba(0, 0, 0, 0.06);
+  --field-line-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Heading font */
+h1, h2, .font-heading {
+  font-family: var(--font-heading, sans-serif);
 }
 
 .card {
   background: var(--bg-card);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   color: var(--text-primary);
 }
 
 .dark .card {
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .btn-primary {
@@ -230,7 +339,7 @@ body {
 
 /* Nav */
 .dark nav {
-  background: var(--bg-nav) !important;
+  background: rgba(20, 31, 27, 0.8) !important;
   border-color: var(--border-color) !important;
 }
 
@@ -275,6 +384,51 @@ body {
 .dark .from-purple-50 { --tw-gradient-from: rgba(168, 85, 247, 0.1) !important; }
 .dark .to-blue-50 { --tw-gradient-to: rgba(59, 130, 246, 0.1) !important; }
 .dark .border-purple-200 { border-color: rgba(168, 85, 247, 0.3) !important; }
+
+/* Goal bounce animation */
+@keyframes goalBounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.35); }
+  60% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.goal-bounce {
+  animation: goalBounce 0.35s ease-out;
+}
+
+/* Loading splash - bouncing ball */
+@keyframes bounceBall {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+
+@keyframes bounceShadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.3; }
+  50% { transform: scaleX(0.6); opacity: 0.15; }
+}
+
+@keyframes loadingFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-ball {
+  animation: bounceBall 0.8s ease-in-out infinite;
+}
+
+.loading-shadow {
+  width: 40px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  margin: 4px auto 0;
+  animation: bounceShadow 0.8s ease-in-out infinite;
+}
+
+.loading-text {
+  animation: loadingFadeIn 0.5s ease-out 0.3s both;
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {

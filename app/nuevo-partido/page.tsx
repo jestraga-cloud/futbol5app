@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Navigation from "@/components/Navigation";
@@ -34,6 +34,20 @@ export default function NuevoPartido() {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [esPartidoFuturo, setEsPartidoFuturo] = useState(false);
+  const [bounceA, setBounceA] = useState(false);
+  const [bounceB, setBounceB] = useState(false);
+
+  const triggerBounce = useCallback((team: "A" | "B") => {
+    if (team === "A") {
+      setBounceA(false);
+      requestAnimationFrame(() => setBounceA(true));
+      setTimeout(() => setBounceA(false), 350);
+    } else {
+      setBounceB(false);
+      requestAnimationFrame(() => setBounceB(true));
+      setTimeout(() => setBounceB(false), 350);
+    }
+  }, []);
 
   // Estados para el nuevo flujo de partido futuro
   const [pasoFuturo, setPasoFuturo] = useState<PasoPartidoFuturo>(1);
@@ -43,6 +57,15 @@ export default function NuevoPartido() {
   const [generandoEquipos, setGenerandoEquipos] = useState(false);
 
   const hayPartidoProgramado = partidoProgramado !== null;
+
+  // Cambiar fondo según superficie seleccionada
+  useEffect(() => {
+    const cls = `superficie-${superficie}`;
+    document.body.classList.add(cls);
+    return () => {
+      document.body.classList.remove(cls);
+    };
+  }, [superficie]);
 
   const toggleJugador = (id: string, equipo: "A" | "B") => {
     if (equipo === "A") {
@@ -319,16 +342,16 @@ export default function NuevoPartido() {
                   </p>
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => setGolesA(Math.max(0, golesA - 1))}
+                      onClick={() => { setGolesA(Math.max(0, golesA - 1)); triggerBounce("A"); }}
                       className="w-10 h-10 bg-gray-200 rounded-full text-xl font-bold"
                     >
                       -
                     </button>
-                    <span className="text-4xl font-bold text-blue-600 w-12 text-center">
+                    <span className={`text-4xl font-bold text-blue-600 w-12 text-center ${bounceA ? "goal-bounce" : ""}`}>
                       {golesA}
                     </span>
                     <button
-                      onClick={() => setGolesA(golesA + 1)}
+                      onClick={() => { setGolesA(golesA + 1); triggerBounce("A"); }}
                       className="w-10 h-10 bg-blue-500 text-white rounded-full text-xl font-bold"
                     >
                       +
@@ -344,16 +367,16 @@ export default function NuevoPartido() {
                   </p>
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => setGolesB(Math.max(0, golesB - 1))}
+                      onClick={() => { setGolesB(Math.max(0, golesB - 1)); triggerBounce("B"); }}
                       className="w-10 h-10 bg-gray-200 rounded-full text-xl font-bold"
                     >
                       -
                     </button>
-                    <span className="text-4xl font-bold text-red-600 w-12 text-center">
+                    <span className={`text-4xl font-bold text-red-600 w-12 text-center ${bounceB ? "goal-bounce" : ""}`}>
                       {golesB}
                     </span>
                     <button
-                      onClick={() => setGolesB(golesB + 1)}
+                      onClick={() => { setGolesB(golesB + 1); triggerBounce("B"); }}
                       className="w-10 h-10 bg-red-500 text-white rounded-full text-xl font-bold"
                     >
                       +

@@ -110,6 +110,38 @@ export interface HabilidadesJugador {
   updated_at: string;
 }
 
+export interface H2HRecord {
+  oponente: Jugador;
+  victorias: number;
+  empates: number;
+  derrotas: number;
+  partidos: number;
+}
+
+export interface Dupla {
+  jugador1: Jugador;
+  jugador2: Jugador;
+  partidos_juntos: number;
+  victorias_juntos: number;
+  winrate: number;
+}
+
+export interface Logro {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  icono: string;
+  desbloqueado: boolean;
+}
+
+export interface VotoMVP {
+  id: string;
+  partido_id: string;
+  session_id: string;
+  jugador_id: string;
+  created_at: string;
+}
+
 export const HABILIDADES_KEYS = [
   "fuerza",
   "arquero",

@@ -7,11 +7,12 @@ import ProximoPartidoBanner from "@/components/ProximoPartidoBanner";
 import DashboardStats from "@/components/DashboardStats";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import ErrorMessage from "@/components/ErrorMessage";
+import DuplasGanadoras from "@/components/DuplasGanadoras";
 import { useEstadisticas } from "@/hooks/useEstadisticas";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 
 export default function Home() {
-  const { estadisticas, cargando, error } = useEstadisticas();
+  const { estadisticas, jugadores, partidos, cargando, error } = useEstadisticas();
   const { stats } = useDashboardStats();
 
   // Filtrar jugadores sin partidos y ordenar para el ranking
@@ -32,8 +33,9 @@ export default function Home() {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl soccer-ball mb-4">⚽</div>
-          <p className="text-white text-lg">Cargando...</p>
+          <div className="text-6xl loading-ball">⚽</div>
+          <div className="loading-shadow" />
+          <p className="text-white text-lg mt-4 loading-text">Cargando...</p>
         </div>
       </main>
     );
@@ -68,21 +70,16 @@ export default function Home() {
 
         {/* Ranking */}
         <div className="mb-4">
-          <RankingTable estadisticas={ranking} />
+          <RankingTable estadisticas={ranking} partidos={partidos} jugadores={jugadores} />
         </div>
 
-        {/* Link a Pachanga */}
-        <a
-          href="/pachanga"
-          className="card p-4 flex items-center justify-center gap-3 mb-4 hover:opacity-90 transition-opacity text-center"
-        >
-          <span className="text-2xl">🏆</span>
-          <div>
-            <p className="font-semibold">Pachanga</p>
-            <p className="text-sm text-gray-500">Mundial personal de cada jugador</p>
+        {/* Duplas Ganadoras */}
+        {partidos.length > 0 && (
+          <div className="mb-4">
+            <DuplasGanadoras jugadores={jugadores} partidos={partidos} />
           </div>
-          <span className="text-gray-400">→</span>
-        </a>
+        )}
+
 
       </div>
 
