@@ -135,7 +135,7 @@ export default function Partidos() {
                       {/* Equipo A */}
                       <div className={`flex-1 ${resultado === "B" ? "opacity-50" : ""}`}>
                         <p className="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Equipo A</p>
-                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-snug">
+                        <p className="text-sm font-medium leading-snug" style={{ color: 'var(--text-primary)' }}>
                           {jugadoresA?.join(", ") || "-"}
                         </p>
                       </div>
@@ -159,7 +159,7 @@ export default function Partidos() {
                       {/* Equipo B */}
                       <div className={`flex-1 text-right ${resultado === "A" ? "opacity-50" : ""}`}>
                         <p className="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Equipo B</p>
-                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-snug">
+                        <p className="text-sm font-medium leading-snug" style={{ color: 'var(--text-primary)' }}>
                           {jugadoresB?.join(", ") || "-"}
                         </p>
                       </div>
