@@ -55,6 +55,28 @@ export async function POST(request: Request) {
         continue;
       }
 
+      // Guardar snapshot actual al historial antes de sobrescribir
+      const { data: actual } = await supabase
+        .from("habilidades_jugador")
+        .select("*")
+        .eq("jugador_id", jugadorId)
+        .single();
+
+      if (actual) {
+        await supabase.from("habilidades_historial").insert({
+          jugador_id: jugadorId,
+          fuerza: actual.fuerza,
+          arquero: actual.arquero,
+          tiro: actual.tiro,
+          regate: actual.regate,
+          pase: actual.pase,
+          defensa: actual.defensa,
+          estado_fisico: actual.estado_fisico,
+          reaccion: actual.reaccion,
+          overall: actual.overall,
+        });
+      }
+
       const skills = {
         jugador_id: jugadorId,
         fuerza: clamp(Number(values[1])),

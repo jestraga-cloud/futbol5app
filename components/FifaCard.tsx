@@ -6,6 +6,7 @@ interface FifaCardProps {
   jugador: Jugador;
   habilidades: HabilidadesJugador | null;
   promedioGrupo?: number;
+  anteriores?: HabilidadesJugador | null;
 }
 
 function getStatColor(value: number): string {
@@ -118,7 +119,18 @@ function RadarChart({ habilidades }: { habilidades: HabilidadesJugador }) {
   );
 }
 
-export default function FifaCard({ jugador, habilidades, promedioGrupo }: FifaCardProps) {
+function StatDiff({ value, prev }: { value: number; prev: number | undefined }) {
+  if (prev === undefined) return null;
+  const diff = value - prev;
+  if (diff === 0) return null;
+  return (
+    <span className={`text-[9px] font-bold ml-0.5 ${diff > 0 ? "text-green-400" : "text-red-400"}`}>
+      {diff > 0 ? `+${diff}` : diff}
+    </span>
+  );
+}
+
+export default function FifaCard({ jugador, habilidades, promedioGrupo, anteriores }: FifaCardProps) {
   const displayName = jugador.apodo || jugador.nombre;
 
   if (!habilidades) {
@@ -138,7 +150,14 @@ export default function FifaCard({ jugador, habilidades, promedioGrupo }: FifaCa
       {/* Header: Overall + Rank badge */}
       <div className="flex items-start justify-between mb-1">
         <div>
-          <div className="fifa-card-overall">{habilidades.overall}</div>
+          <div className="fifa-card-overall flex items-baseline">
+            {habilidades.overall}
+            {anteriores && habilidades.overall !== anteriores.overall && (
+              <span className={`text-xs ml-1 font-bold ${habilidades.overall > anteriores.overall ? "text-green-400" : "text-red-400"}`}>
+                {habilidades.overall > anteriores.overall ? `+${habilidades.overall - anteriores.overall}` : habilidades.overall - anteriores.overall}
+              </span>
+            )}
+          </div>
           <div className="text-xs font-bold opacity-60 tracking-wider">F5</div>
         </div>
         <div className="text-right">
@@ -159,6 +178,7 @@ export default function FifaCard({ jugador, habilidades, promedioGrupo }: FifaCa
       <div className="space-y-1.5">
         {HABILIDADES_KEYS.map((key) => {
           const value = habilidades[key] as number;
+          const prev = anteriores ? (anteriores[key] as number) : undefined;
           const color = getStatColor(value);
           return (
             <div key={key} className="flex items-center gap-2 text-sm">
@@ -169,8 +189,9 @@ export default function FifaCard({ jugador, habilidades, promedioGrupo }: FifaCa
                   style={{ width: `${value}%`, backgroundColor: color }}
                 />
               </div>
-              <span className="font-bold w-7 text-right text-xs" style={{ color }}>
+              <span className="font-bold text-right text-xs flex items-center" style={{ color }}>
                 {value}
+                <StatDiff value={value} prev={prev} />
               </span>
             </div>
           );

@@ -12,6 +12,7 @@ interface FifaCardModalProps {
 
 export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModalProps) {
   const [habilidades, setHabilidades] = useState<HabilidadesJugador | null>(null);
+  const [anteriores, setAnteriores] = useState<HabilidadesJugador | null>(null);
   const [promedioGrupo, setPromedioGrupo] = useState<number>(0);
   const [cargando, setCargando] = useState(false);
 
@@ -21,8 +22,7 @@ export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModa
     const fetchHabilidades = async () => {
       setCargando(true);
       try {
-        // Cargar habilidades del jugador y de todos para el promedio
-        const [{ data }, { data: todas }] = await Promise.all([
+        const [{ data }, { data: todas }, { data: historial }] = await Promise.all([
           supabase
             .from("habilidades_jugador")
             .select("*")
@@ -31,14 +31,22 @@ export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModa
           supabase
             .from("habilidades_jugador")
             .select("overall"),
+          supabase
+            .from("habilidades_historial")
+            .select("*")
+            .eq("jugador_id", jugador.id)
+            .order("created_at", { ascending: false })
+            .limit(1),
         ]);
         setHabilidades(data);
+        setAnteriores(historial && historial.length > 0 ? historial[0] as HabilidadesJugador : null);
         if (todas && todas.length > 0) {
           const sum = todas.reduce((acc, h) => acc + (h.overall || 0), 0);
           setPromedioGrupo(Math.round(sum / todas.length));
         }
       } catch {
         setHabilidades(null);
+        setAnteriores(null);
       } finally {
         setCargando(false);
       }
@@ -58,7 +66,7 @@ export default function FifaCardModal({ jugador, isOpen, onClose }: FifaCardModa
             <p className="text-white text-sm opacity-70">Cargando...</p>
           </div>
         ) : (
-          <FifaCard jugador={jugador} habilidades={habilidades} promedioGrupo={promedioGrupo} />
+          <FifaCard jugador={jugador} habilidades={habilidades} promedioGrupo={promedioGrupo} anteriores={anteriores} />
         )}
       </div>
     </div>
